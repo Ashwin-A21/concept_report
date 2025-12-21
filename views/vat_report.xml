@@ -1,0 +1,60 @@
+<odoo>
+    <record id="view_vat_report_form" model="ir.ui.view">
+        <field name="name">vat.report.form</field>
+        <field name="model">vat.report</field>
+        <field name="arch" type="xml">
+            <form string="VAT Report">
+                <header>
+                    <button name="download_excel_report"
+                    string="Download Excel"
+                    type="object"
+                    class="oe_highlight" icon="fa-download"/>
+                </header>
+                <sheet>
+                
+                    <group>
+                        <field name="quarter_name"/>
+                        <field name="year"/>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Sales and Sales Return">
+                            <field name="horizontal_table_html" widget="html" readonly="1"/>
+                        </page>
+                        <page string="Purchase">
+                            <field name="purchase_table_html" widget="html" readonly="1"/>
+                        </page>
+                        <!-- <page string="Expense">
+                            <field name="expense_table_html" widget="html" readonly="1"/>
+                        </page> -->
+                        <page string="Expense Details">
+                            <field name="expense_details_table_html" widget="html" readonly="1"/>
+                        </page>
+                  
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_vat_report" model="ir.actions.act_window">
+        <field name="name">VAT Report</field>
+        <field name="res_model">vat.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_vat_report"
+          name="VAT Report"
+          parent="concept_account_reports.menu_concept_account_root"
+          sequence="3"/>
+
+    <menuitem id="menu_vat_report_form"
+          name="VAT Report"
+          parent="menu_vat_report"
+          action="action_vat_report"
+          sequence="1"
+        />
+</odoo>

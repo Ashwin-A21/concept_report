@@ -1,0 +1,25 @@
+{
+    'name': 'Report',
+    'version': '1.0',
+    'category': 'Accounting',
+    'summary': 'Day Book Report in Tree View from account.move.line',
+    'depends': ['account', 'web', 'base_setup'],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/account_payment_report_view.xml',
+        'views/aged_receivable_report_view.xml',
+        'views/aged_payable_report_view.xml',
+        'views/day_book_view.xml',
+        'views/vat_report.xml',
+        'views/vat_configuration_menu.xml',
+        'data/expense_option_cron.xml',
+        'views/account_account_tree_view.xml',
+
+    ],
+    'installable': True,
+    'auto_install': False,
+    'application': True,
+    'license': 'LGPL-3',
+    'price': 50.00,
+    'currency': 'USD',
+}

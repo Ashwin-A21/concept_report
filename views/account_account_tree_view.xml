@@ -1,0 +1,28 @@
+<odoo>
+    <record id="view_account_account_tree_custom" model="ir.ui.view">
+        <field name="name">account.account.tree.custom</field>
+        <field name="model">account.account</field>
+        <field name="arch" type="xml">
+            <tree editable="top">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="is_active_custom"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_account_custom" model="ir.actions.act_window">
+        <field name="name">Accounts List</field>
+        <field name="res_model">account.account</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_account_account_tree_custom"/>
+        <field name="domain">[('account_type', 'in', ('asset_current', 'liability_current'))]</field>
+    </record>
+
+    <menuitem id="menu_account_account_custom"
+              name="Accounts List"
+              parent="menu_vat_report"
+              action="action_account_account_custom"
+              sequence="10"
+              groups="account.group_account_manager"/>
+</odoo>

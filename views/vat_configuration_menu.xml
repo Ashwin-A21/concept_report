@@ -1,0 +1,42 @@
+
+<odoo>
+    <!-- Tree View -->
+    <record id="view_account_expense_option_tree" model="ir.ui.view">
+        <field name="name">account.expense.option.line.tree</field>
+        <field name="model">account.expense.option.line</field>
+        <field name="arch" type="xml">
+            <tree editable="top">
+                <field name="company_id"/>
+                <field name="account_id"/>
+                <field name="option_selection"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_account_expense_option_line" model="ir.actions.act_window">
+        <field name="name">Expense Account Options (From Journal)</field>
+        <field name="res_model">account.expense.option.line</field>
+        <field name="view_mode">tree</field>
+        
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_account_expense_option_root"
+              name="Expense Account Options"
+               parent="menu_vat_report"
+              action="action_account_expense_option_line"
+              groups="account.group_account_manager"/>
+
+    <!-- Security Rule: Show only records of current company -->
+    <record id="account_expense_option_line_company_rule" model="ir.rule">
+        <field name="name">Expense Options: Only show selected company</field>
+        <field name="model_id" ref="model_account_expense_option_line"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+
+
+
+</odoo>

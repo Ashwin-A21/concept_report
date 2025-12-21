@@ -1,0 +1,88 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_day_book_entry_tree" model="ir.ui.view">
+        <field name="name">day.book.entry.tree</field>
+        <field name="model">day.book.entry</field>
+        <field name="arch" type="xml">
+            <tree string="Day Book Report" create="false" edit="false" delete="false">
+                <field name="date"/>
+                <field name="journal_id" widget="many2one_clickable"/>
+                <field name="move_id" widget="many2one_clickable"/>
+                <field name="entry_label"/>
+                <field name="partner_id"/>
+                <field name="debit" widget="float" digits="[16, 3]" sum="Total Debit"/>
+                <field name="credit" widget="float" digits="[16, 3]" sum="Total Credit"/>
+                <field name="move_type"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_day_book_search" model="ir.ui.view">
+        <field name="name">day.book.entry.search</field>
+        <field name="model">day.book.entry</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="journal_id"/>
+                <field name="partner_id"/>
+                <field name="move_id"/>
+                <field name="move_type"/>
+
+                <field name="parent_state"/>
+                <filter name="filter_posted" string="Posted" domain="[('parent_state', '=', 'posted')]"/>
+                <filter name="filter_draft" string="Draft" domain="[('parent_state', '=', 'draft')]"/>
+
+                <separator/>
+
+                <filter name="move_type_entry" string="Journal Entry" domain="[('move_type', '=', 'entry')]"/>
+                <filter name="move_type_out_invoice" string="Customer Invoice" domain="[('move_type', '=', 'out_invoice')]"/>
+                <filter name="move_type_in_invoice" string="Vendor Bill" domain="[('move_type', '=', 'in_invoice')]"/>
+                <filter name="move_type_out_refund" string="Customer Credit Note" domain="[('move_type', '=', 'out_refund')]"/>
+                <filter name="move_type_in_refund" string="Vendor Credit Note" domain="[('move_type', '=', 'in_refund')]"/>
+
+                <separator/>
+                <filter string="Today" name="today" domain="[('date', '=', context_today())]"/>
+                <filter name="yesterday" string="Yesterday" domain="[('date', '=', (context_today() - relativedelta(days=1)))]"/> 
+                <filter name="this_month" string="This Month" domain="[('date', '&gt;=', context_today().strftime('%Y-%m-01')), ('date', '&lt;=', context_today())]" /> 
+                    
+                <separator/> 
+
+                <separator/>  
+                <filter name="filter_date" string="Date" date="date"/> 
+   
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_by_journal" string="Journal" context="{'group_by': 'journal_id'}"/>
+                    <filter name="group_by_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_by_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_by_account" string="Account" context="{'group_by': 'account_id'}"/>
+                    <filter name="group_by_move_type" string="Move Type" context="{'group_by': 'move_type'}"/>
+                    <filter name="group_by_invoice_date" string="Invoice Date" context="{'group_by': 'invoice_date'}"/>
+                    <filter name="group_by_due_date" string="Due Date" context="{'group_by': 'due_date'}"/>
+                    <filter name="group_by_date" string="Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_day_book_entry" model="ir.actions.act_window">
+        <field name="name">Day Book Report</field>
+        <field name="res_model">day.book.entry</field>
+        <field name="view_mode">tree</field>
+        
+        <field name="search_view_id" ref="view_day_book_search"/>
+        <field name="help" type="html">
+            <p>This report displays a list of day book entries including debit, credit, and balance.</p>
+        </field>
+        <field name="domain">[('company_id', 'in', context.get('allowed_company_ids', []))]</field>
+        <field name="context">{ "search_default_today": 1, "search_default_filter_posted": 1 }</field>
+
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_day_book_report"
+              name="Day Book Report"
+              parent="concept_account_reports.menu_concept_account_root"
+              action="action_day_book_entry"/>
+</odoo>

@@ -1,0 +1,111 @@
+<odoo>
+
+    <record id="view_aged_receivable_report_line_tree" model="ir.ui.view">
+        <field name="name">aged.receivable.report.line.tree</field>
+        <field name="model">aged.receivable.report.line</field>
+        <field name="arch" type="xml">
+            <tree string="Age Receivable Report" create="false" delete="false">
+                <field name="partner_id"/>
+                <field name="move_id" widget="many2one_clickable"/>
+                <field name="date"/>
+                <field name="journal_id" widget="many2one_clickable"/>
+                <field name="account_id"/>
+                <field name="not_due"/>
+                <field name="bucket_1_30" widget="float" digits="[16, 3]"/>
+                <field name="bucket_31_60" widget="float" digits="[16, 3]"/>
+                <field name="bucket_61_90" widget="float" digits="[16, 3]" />
+                <field name="bucket_91_120" widget="float" digits="[16, 3]"  />
+                <field name="bucket_121_180" widget="float" digits="[16, 3]"/>
+                <field name="bucket_180_plus" widget="float" digits="[16, 3]"/>
+                <field name="total"/>
+                
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_account_recievable_search" model="ir.ui.view">
+        <field name="name">aged.receivable.report.line.search</field>
+        <field name="model">aged.receivable.report.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="journal_id"/>
+                <field name="partner_id"/>
+                <field name="move_id"/>
+                <!-- <field name="parent_state"/> -->
+                <!-- <field name="move_type"/>--> 
+
+                
+                <field name="parent_state"/>
+                <filter name="filter_posted" string="Posted" domain="[('parent_state', '=', 'posted')]"/>
+                <filter name="filter_draft" string="Draft" domain="[('parent_state', '=', 'draft')]"/>
+
+                <separator/>
+
+                <filter name="move_type_entry" string="Journal Entry" domain="[('move_type', '=', 'entry')]"/>
+                <filter name="move_type_out_invoice" string="Customer Invoice" domain="[('move_type', '=', 'out_invoice')]"/>
+                <filter name="move_type_out_refund" string="Customer Credit Note" domain="[('move_type', '=', 'out_refund')]"/> 
+                <separator/>
+
+                <filter string="Today" name="today" domain="[('date', '=', context_today())]"/>
+                <filter name="yesterday" string="Yesterday" domain="[('date', '=', (context_today() - relativedelta(days=1)))]"/> 
+                <filter name="this_month" string="This Month" domain="[('date', '&gt;=', context_today().strftime('%Y-%m-01')), ('date', '&lt;=', context_today())]" /> 
+                <separator/>
+                
+                <separator/>
+               
+                <filter name="not_due_filter" string="Not Due" domain="[('aging_bucket', '=', 'not_due')]"/>
+                <filter name="bucket_1_30_filter" string="1 - 30 Days" domain="[('aging_bucket', '=', '1_30')]"/>
+                <filter name="bucket_31_60_filter" string="31 - 60 Days" domain="[('aging_bucket', '=', '31_60')]"/>
+                <filter name="bucket_61_90_filter" string="61 - 90 Days" domain="[('aging_bucket', '=', '61_90')]"/>
+                <filter name="bucket_91_120_filter" string="91 - 120 Days" domain="[('aging_bucket', '=', '91_120')]"/>
+                <filter name="bucket_121_180_filter" string="121 - 180 Days" domain="[('aging_bucket', '=', '121_180')]"/>
+                <filter name="bucket_180_plus_filter" string="180+ Days" domain="[('aging_bucket', '=', '180_plus')]"/>
+                
+               
+                <separator/>  
+   
+                <filter name="filter_invoice_date" string="Invoice Date" date="invoice_date"/>
+                <filter name="filter_date" string="Date" date="date"/>
+
+                <group expand="0" string="Group By">
+                    
+                    <filter name="group_by_journal" string="Journal" context="{'group_by': 'journal_id'}"/>
+                    <filter name="group_by_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_by_company" string="Company" context="{'group_by': 'company_id'}"/>
+                    <filter name="group_by_account" string="Account" context="{'group_by': 'account_id'}"/>
+                    <separator/>
+                    <filter name="group_by_move_type" string="Move Type" context="{'group_by': 'move_type'}"/>
+                    <filter name="group_by_aging" string="Aging Bucket" context="{'group_by': 'aging_bucket'}"/>
+                    <separator/>
+                    <filter name="group_by_invoice_date" string="Invoice Date" context="{'group_by': 'invoice_date'}"/>
+                    <filter name="group_by_due_date" string="Due Date" context="{'group_by': 'due_date'}"/>
+                    <filter name="group_by_date" string="Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+
+
+    <!-- Action -->
+    <record id="action_aged_receivable_report_line" model="ir.actions.act_window">
+        <field name="name">Age Receivable</field>
+        <field name="res_model">aged.receivable.report.line</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="view_account_recievable_search"/>
+        <field name="context">{'group_by': 'partner_id', 'search_default_filter_posted': 1}</field>
+         <field name="domain">
+            [
+                ('company_id', 'in', context.get('allowed_company_ids', [])),
+               
+               
+            ]</field>
+    </record>
+
+   
+    
+    <menuitem id="menu_aged_receivable_report_line"
+              name="Aged Receivable Report"
+              parent="concept_account_reports.menu_concept_account_root" 
+              action="action_aged_receivable_report_line"/>
+</odoo>
